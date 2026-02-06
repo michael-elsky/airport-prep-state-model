@@ -38,25 +38,24 @@ function App() {
   }
 
   function airportReducer(state: State<Flight[]>, action: Action): State<Flight[]> {
-    if (action === "UPDATE_FLIGHT_STATUS") {
-      state = { status: "loading" };
-    }
-
-    if (action === "FETCH_SUCCESS") {
-      state = { status: "success", data: [FlightState] };
-    }
-
-    if (action === "FETCH_ERROR") {
-      state = { status: "error" };
+    switch (action) {
+      case "UPDATE_FLIGHT_STATUS":
+        state = { status: "loading" };
+        break;
+      case "FETCH_SUCCESS":
+        state = { status: "success", data: [FlightState] };
+        break;
+      case "FETCH_ERROR":
+        state = { status: "error" };
+        break;
     }
 
     return state;
   }
 
   function handleClick() {
-    let state = { ...INITIAL_FLIGHT_STATE };
+    let state = airportReducer(INITIAL_FLIGHT_STATE, "UPDATE_FLIGHT_STATUS");
 
-    airportReducer(state, "UPDATE_FLIGHT_STATUS");
     update(state);
 
     setTimeout(() => {
