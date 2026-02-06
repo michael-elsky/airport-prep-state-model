@@ -38,8 +38,8 @@ function App() {
   }
 
   function airportReducer(state: State<Flight[]>, action: Action): State<Flight[]> {
-    switch (action) {
-      case "UPDATE_FLIGHT_STATUS":
+    switch (action.type) {
+      case "FETCH_START":
         state = { status: "loading" };
         break;
       case "FETCH_SUCCESS":
@@ -54,7 +54,7 @@ function App() {
   }
 
   function handleClick() {
-    let state = airportReducer(INITIAL_FLIGHT_STATE, "UPDATE_FLIGHT_STATUS");
+    let state = airportReducer(INITIAL_FLIGHT_STATE, { type: "FETCH_START" });
 
     update(state);
 
@@ -62,11 +62,11 @@ function App() {
       const isError = Math.random() * 1 > 0.5;
 
       if (!isError) {
-        state = airportReducer(state, "FETCH_SUCCESS");
+        state = airportReducer(state, { type: "FETCH_SUCCESS", payload: [FlightState] });
       }
 
       if (isError) {
-        state = airportReducer(state, "FETCH_ERROR");
+        state = airportReducer(state, { type: "FETCH_ERROR", error: "Some error" });
       }
 
       update(state);
