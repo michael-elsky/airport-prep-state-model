@@ -2,7 +2,11 @@ export type State<T> = { status: "idle" } | { status: "loading" } | { status: "s
 
 // export type Action = "UPDATE_FLIGHT_STATUS" | "FETCH_START" | "FETCH_LOADING" | "FETCH_ERROR" | "FETCH_SUCCESS";
 
-export type Action = { type: "FETCH_START" } | { type: "FETCH_SUCCESS"; payload: Flight[] } | { type: "FETCH_ERROR"; error: string };
+export type Action =
+  | { type: "FETCH_START" }
+  | { type: "FETCH_SUCCESS"; payload: Flight[] }
+  | { type: "FETCH_ERROR"; error: string }
+  | { type: "DELETE_FLIGHT", payload: any };
 
 export interface Flight {
   id: number;

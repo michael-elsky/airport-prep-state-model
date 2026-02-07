@@ -1,13 +1,34 @@
 import type { Action, Flight, State } from "./types/types";
 
-let INITIAL_FLIGHT_STATE: State<Flight[]> = { status: "idle" };
+const INITIAL_FLIGHT_STATE: State<Flight[]> = { status: "idle" };
 
-const FlightState: Flight = {
-  id: 1,
-  destination: "Tokyo",
-  flightNumber: 3,
-  status: { status: "success", data: "Some data" },
-};
+// const FlightState: Flight = {
+//   id: 1,
+//   destination: "Tokyo",
+//   flightNumber: 3,
+//   status: { status: "success", data: "Some data" },
+// };
+
+const FlightState: Flight[] = [
+  {
+    id: 1,
+    destination: "Tokyo",
+    flightNumber: 23,
+    status: { status: "success", data: "Some data Tokyo" },
+  },
+  {
+    id: 2,
+    destination: "London",
+    flightNumber: 33,
+    status: { status: "success", data: "Some data London" },
+  },
+  {
+    id: 3,
+    destination: "Paris",
+    flightNumber: 53,
+    status: { status: "success", data: "Some data Paris" },
+  },
+];
 
 function App() {
   const app = document.querySelector("#app");
@@ -20,21 +41,42 @@ function App() {
 
   app.append(button, div);
 
-  function update(state: State<Flight[]>) {
-    console.log(state.status === "success");
-    if (state.status === "success") {
-      console.log(1);
-      div.innerHTML = `
-      ${state.status}\n
-      ${state.data[0].destination}
-    `;
+  function deleteRace(state: State<Flight[]>, raceId: number) {
+    console.log(raceId, state);
+    if (state.status !== "success") return;
 
-      return;
+    const updateRace = state.data.filter(race => race.id !== raceId);
+
+    state = airportReducer(state, { type: "DELETE_FLIGHT", payload: updateRace });
+    console.log(state);
+
+    update(state);
+  }
+
+  function update(state: State<Flight[]>) {
+    div.innerHTML = "";
+
+    if (state.status === "success") {
+      for (let i = 0; i < state.data.length; i++) {
+        const p = document.createElement("p");
+        const button = document.createElement("button");
+
+        button.textContent = "Delete race";
+        button.addEventListener("click", () => deleteRace(state, state.data[i].id));
+
+        p.textContent = `Destination: ${state.data[i].destination} - ${state.status}`;
+
+        div.append(p, button);
+      }
+
+      return null;
     }
 
     div.innerHTML = `
       ${state.status}
     `;
+
+    return null;
   }
 
   function airportReducer(state: State<Flight[]>, action: Action): State<Flight[]> {
@@ -43,10 +85,13 @@ function App() {
         state = { status: "loading" };
         break;
       case "FETCH_SUCCESS":
-        state = { status: "success", data: [FlightState] };
+        state = { status: "success", data: action.payload };
         break;
       case "FETCH_ERROR":
         state = { status: "error" };
+        break;
+      case "DELETE_FLIGHT":
+        state = { status: "success", data: action.payload };
         break;
     }
 
@@ -62,7 +107,7 @@ function App() {
       const isError = Math.random() * 1 > 0.5;
 
       if (!isError) {
-        state = airportReducer(state, { type: "FETCH_SUCCESS", payload: [FlightState] });
+        state = airportReducer(state, { type: "FETCH_SUCCESS", payload: FlightState });
       }
 
       if (isError) {
