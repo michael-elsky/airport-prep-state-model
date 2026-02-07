@@ -6,7 +6,7 @@ export type Action =
   | { type: "FETCH_START" }
   | { type: "FETCH_SUCCESS"; payload: Flight[] }
   | { type: "FETCH_ERROR"; error: string }
-  | { type: "DELETE_FLIGHT", payload: any };
+  | { type: "DELETE_FLIGHT"; payload: number };
 
 export interface Flight {
   id: number;

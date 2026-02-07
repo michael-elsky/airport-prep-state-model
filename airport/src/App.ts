@@ -42,13 +42,7 @@ function App() {
   app.append(button, div);
 
   function deleteRace(state: State<Flight[]>, raceId: number) {
-    console.log(raceId, state);
-    if (state.status !== "success") return;
-
-    const updateRace = state.data.filter(race => race.id !== raceId);
-
-    state = airportReducer(state, { type: "DELETE_FLIGHT", payload: updateRace });
-    console.log(state);
+    state = airportReducer(state, { type: "DELETE_FLIGHT", payload: raceId });
 
     update(state);
   }
@@ -82,17 +76,21 @@ function App() {
   function airportReducer(state: State<Flight[]>, action: Action): State<Flight[]> {
     switch (action.type) {
       case "FETCH_START":
-        state = { status: "loading" };
-        break;
+        return { status: "loading" };
+
       case "FETCH_SUCCESS":
-        state = { status: "success", data: action.payload };
-        break;
+        return { status: "success", data: action.payload };
+
       case "FETCH_ERROR":
-        state = { status: "error" };
-        break;
+        return { status: "error" };
+
       case "DELETE_FLIGHT":
-        state = { status: "success", data: action.payload };
-        break;
+        if (state.status !== "success") return state;
+
+        return {
+          ...state,
+          data: state.data.filter(race => race.id !== action.payload),
+        };
     }
 
     return state;
