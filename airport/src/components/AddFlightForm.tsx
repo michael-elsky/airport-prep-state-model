@@ -13,27 +13,16 @@ class AddFlightForm extends Component<
 > {
   state: FormState = { id: 0, destination: '', flightNumber: 0 };
 
-  handleChange = (e: React.ChangeEvent<HTMLInputElement>, category: string) => {
-    if (category === 'id') {
-      this.state.id = +e.target.value;
-    }
-    if (category === 'destination') {
-      this.state.destination = e.target.value;
-    }
-    if (category === 'flightNumber') {
-      this.state.flightNumber = +e.target.value;
-    }
+  handleChange =
+    (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = field === 'destination' ? e.target.value : +e.target.value;
 
-    this.setState({
-      id: this.state.id,
-      destination: this.state.destination,
-      flightNumber: this.state.flightNumber,
-    });
-  };
+      this.setState({ [field]: value } as Pick<FormState, typeof field>);
+    };
 
   handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Отправляем:', this.state.destination);
+    console.log('Отправляем:', this.state);
 
     this.props.dispatch({
       type: 'ADD_FLIGHT',
@@ -46,22 +35,20 @@ class AddFlightForm extends Component<
   };
 
   render() {
+    const { id, destination, flightNumber } = this.state;
+
     return (
       <form onSubmit={this.handleSubmit}>
+        <input type="text" value={id} onChange={this.handleChange('id')} />
         <input
           type="text"
-          value={this.state.id}
-          onChange={(e) => this.handleChange(e, 'id')}
+          value={destination}
+          onChange={this.handleChange('destination')}
         />
         <input
           type="text"
-          value={this.state.destination}
-          onChange={(e) => this.handleChange(e, 'destination')}
-        />
-        <input
-          type="text"
-          value={this.state.flightNumber}
-          onChange={(e) => this.handleChange(e, 'flightNumber')}
+          value={flightNumber}
+          onChange={this.handleChange('flightNumber')}
         />
         <button type="submit">Add Flight</button>
       </form>

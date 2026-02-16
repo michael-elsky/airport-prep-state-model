@@ -9,12 +9,12 @@ import AddFlightForm from './components/AddFlightForm';
 class App extends Component {
   state: State<Flight[]> = { status: 'idle' };
 
-  dispatch(action: Action) {
+  dispatch = (action: Action) => {
     this.setState(
       (prevState: State<Flight[]>): State<Flight[]> =>
         airportReducer(prevState, action),
     );
-  }
+  };
 
   componentDidMount(): void {
     this.handleClick();

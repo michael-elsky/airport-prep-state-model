@@ -1,4 +1,4 @@
-import type { Action, Flight, State } from "../types/types";
+import type { Action, Flight, State } from '../types/types';
 
 export function airportReducer(
   state: State<Flight[]>,
@@ -20,6 +20,14 @@ export function airportReducer(
       return {
         ...state,
         data: state.data.filter((race) => race.id !== action.payload),
+      };
+
+    case 'ADD_FLIGHT':
+      if (state.status !== 'success') return state;
+
+      return {
+        ...state,
+        data: [...state.data, action.payload],
       };
   }
 
