@@ -4,6 +4,7 @@ import { airportReducer } from './utils/airportReducer';
 import FlightState from './data/FlightState';
 import FlightList from './components/FlightList';
 import Header from './components/Header';
+import AddFlightForm from './components/AddFlightForm';
 
 class App extends Component {
   state: State<Flight[]> = { status: 'idle' };
@@ -44,6 +45,7 @@ class App extends Component {
     return (
       <>
         <Header handleClick={this.handleClick} />
+        <AddFlightForm dispatch={this.dispatch} />
 
         {status === 'loading' && <p>Loading...</p>}
         {status === 'error' && <p>Some error</p>}
