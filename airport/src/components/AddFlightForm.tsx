@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import type { Action } from '../types/types';
 
 interface FormState {
@@ -7,53 +7,60 @@ interface FormState {
   flightNumber: number;
 }
 
-class AddFlightForm extends Component<
-  { dispatch: (action: Action) => void },
-  FormState
-> {
-  state: FormState = { id: 0, destination: '', flightNumber: 0 };
+interface Props {
+  dispatch: (action: Action) => void;
+}
 
-  handleChange =
-    (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) => {
+const INITIAL_STATE: FormState = { id: 0, destination: '', flightNumber: 0 };
+
+function AddFlightForm({ dispatch }: Props) {
+  const [formState, setFormState] = useState<FormState>(INITIAL_STATE);
+
+  function handleChange(field: keyof FormState) {
+    return (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = field === 'destination' ? e.target.value : +e.target.value;
 
-      this.setState({ [field]: value } as Pick<FormState, typeof field>);
+      setFormState((prevState) => {
+        return {
+          ...prevState,
+          [field]: value,
+        };
+      });
     };
+  }
 
-  handleSubmit = (e: React.FormEvent) => {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log('Отправляем:', this.state);
+    console.log('Отправляем:', formState);
 
-    this.props.dispatch({
+    dispatch({
       type: 'ADD_FLIGHT',
       payload: {
-        id: this.state.id,
-        destination: this.state.destination,
-        flightNumber: this.state.flightNumber,
+        id: formState.id,
+        destination: formState.destination,
+        flightNumber: formState.flightNumber,
       },
     });
-  };
-
-  render() {
-    const { id, destination, flightNumber } = this.state;
-
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <input type="text" value={id} onChange={this.handleChange('id')} />
-        <input
-          type="text"
-          value={destination}
-          onChange={this.handleChange('destination')}
-        />
-        <input
-          type="text"
-          value={flightNumber}
-          onChange={this.handleChange('flightNumber')}
-        />
-        <button type="submit">Add Flight</button>
-      </form>
-    );
   }
+
+  const { id, destination, flightNumber } = formState;
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="text" value={id} onChange={handleChange('id')} />
+      <input
+        type="text"
+        value={destination}
+        onChange={handleChange('destination')}
+      />
+      <input
+        type="text"
+        value={flightNumber}
+        onChange={handleChange('flightNumber')}
+      />
+      <button type="submit">Add Flight</button>
+    </form>
+  );
 }
 
 export default AddFlightForm;
